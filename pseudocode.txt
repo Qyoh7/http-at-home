@@ -1,0 +1,5 @@
+===Parsing===
+1. read request
+2. seperate header from request line
+3. parse request line by spaces
+4
