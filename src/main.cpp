@@ -1,6 +1,9 @@
-#include "server.hpp"
+#include "Responses.h"
+#include "Utils.hpp"
+#include "parser.hpp"
 #include <iostream>
 #include <string>
+#include <assert.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -36,97 +39,31 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    int connection_backlog = 5;
-    if (listen(server_fd, connection_backlog) != 0) {
-        std::cerr << "listen failed\n";
-        return 1;
-    }
 
-    struct sockaddr_in client_addr;
-    int client_addr_len = sizeof(client_addr);
+    // ===bullsht goes here===
 
-    std::cout << "Waiting for a client to connect...\n";
-
-    int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
-    std::cout << "Client connected\n";
-
-    // ===Code goes here===
-    Server server(client_fd);
-    std::string buf;
-    buf.resize(1024);
-    const char RESPONSE_200[] = "HTTP/1.1 200 OK\r\n\r\n";
-    const char RESPONSE_404[] = "HTTP/1.1 404 Not Found\r\n\r\n";
-
-    recv(client_fd, buf.data(), buf.length(), 0);
-
-    std::vector<std::string> lines = server.splitString(buf, "\\c\\n");
-    for (std::string line : lines)
+    for (;;)
     {
-        std::cout << line << "|";
+        int connection_backlog = 5;
+        if (listen(server_fd, connection_backlog) != 0) {
+            std::cerr << "listen failed\n";
+            return 1;
+        }
+
+        struct sockaddr_in client_addr;
+        int client_addr_len = sizeof(client_addr);
+
+        std::cout << "Waiting for a client to connect...\n";
+
+        int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
+        std::cout << "Client connected\n";
+
+        Request req = Parser::recvRequest(client_fd);
+        Utils::printRequest(req);
+        close(client_fd);
     }
-    std::cout << "\n";
 
-    // std::string buf;
-    // buf.resize(1024);
-    // std::string part;
-    // std::string request;
-    // std::string target;
-    // bool gotRequest = false;
-    // bool gotTarget = false;
-    //
-    // const char RESPONSE_200[] = "HTTP/1.1 200 OK\r\n\r\n";
-    // const char RESPONSE_404[] = "HTTP/1.1 404 Not Found\r\n\r\n";
-    //
-    // recv(client_fd, buf.data(), 1024, 0);
-    //
-    // std::cout << "\ngot data:\n" << buf;
-    //
-    // for (int i = 0; i < buf.size(); i++) 
-    // {
-    //     if (std::isspace(buf.at(i)))
-    //     {
-    //         if (!gotRequest) 
-    //         {
-    //             request = part;
-    //             gotRequest = true;
-    //             std::cout << "Got request " << request << "\n";
-    //         }
-    //         else if (gotRequest && !gotTarget) 
-    //         {
-    //             target = part;
-    //             gotTarget = true;
-    //             std::cout << "Got target " << target << "\n";
-    //         }
-    //         part = "";
-    //         continue;
-    //     }
-    //     part += buf.at(i);
-    // }
-    //
-    // if (request == "GET")
-    // {
-    //     if (target == "/")
-    //     {
-    //         send(client_fd, RESPONSE_200, sizeof(RESPONSE_200), 0);
-    //     }
-    //     else if (target.substr(0, 5) == "/echo")
-    //     {
-    //         std::string echoString = target.substr(6, target.size()).data();
-    //         std::stringstream response;
-    //         response << RESPONSE_200 << "Content-Type: text/plain\r\nContent-Length: " << echoString.length() << "\r\n\r\n" << echoString;
-    //
-    //         std::cout << "response to echo request: " << response.str() << "\n";
-    //
-    //         send(client_fd, response.str().c_str(), response.str().length(), 0);
-    //     }
-    //     else
-    //     {
-    //         send(client_fd, RESPONSE_404, sizeof(RESPONSE_404), 0);
-    //     }
-    //
-    // }
-
+    // End bs
     close(server_fd);
-
     return 0;
 }

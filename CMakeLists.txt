@@ -12,4 +12,7 @@ find_package(ZLIB REQUIRED)
 
 add_executable(http-server ${SOURCE_FILES})
 
-target_link_libraries(http-server PRIVATE Threads::Threads ZLIB::ZLIB)
+target_link_libraries(http-server PRIVATE 
+    Threads::Threads 
+    ZLIB::ZLIB
+)
