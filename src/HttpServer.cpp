@@ -5,6 +5,7 @@
 #include <iostream>
 #include <print>
 #include <stdexcept>
+#include "Utils.hpp"
 #include "errno.h"
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -63,13 +64,13 @@ int HttpServer::acceptClient()
     struct sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
 
-    std::cout << "[INFO] Waiting for a client to connect...\n";
+    Utils::log("Waiting for a client to connect", LogLevel::INFO);
     int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
     if (client_fd < 0)
     {
         throw std::runtime_error(std::string("Failed to accept client: ") + std::strerror(errno));
     }
-    std::cout << "[INFO]: Client connected\n";
+    Utils::log("Client connected", LogLevel::INFO);
     return client_fd;
 }
 
@@ -89,8 +90,7 @@ void HttpServer::init()
     setReuse();
     bindSocket();
     listenSocket();
-    std::cout << "[INFO]: Listening on port " << std::to_string(port) << "\n";
-
+    Utils::log("Listening on port " + std::to_string(port), LogLevel::INFO);
 }
 
 

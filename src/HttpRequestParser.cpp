@@ -15,7 +15,7 @@ namespace HttpRequestParser
         int responseSizeInBytes = recv(client_fd, buf.data(), buf.size(), 0);
         if (responseSizeInBytes == -1)
         {
-            throw std::runtime_error("[ERROR]: Failed to receive request from client");
+            throw std::runtime_error("Failed to receive request from client");
         }
         buf.resize(responseSizeInBytes);
         return buf;

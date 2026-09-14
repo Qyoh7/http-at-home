@@ -121,7 +121,7 @@ namespace Utils
         }
         else 
         {
-            throw std::runtime_error("[ERROR] Unexpected Header Type " + str);
+            throw std::runtime_error("Unexpected Header Type " + str);
         }
     }
 
@@ -144,6 +144,28 @@ namespace Utils
             }
         }
         return escaped;
+    }
+
+    void log(std::string msg, LogLevel level)
+    {
+        switch (level)
+        {
+            case LogLevel::INFO:
+                std::cout << "[INFO] " << msg << "\n";
+                break;
+
+            case LogLevel::WARN:
+                std::cout << "[WARN] " << msg << "\n";
+                break;
+            case LogLevel::ERROR:
+                std::cout << "[ERROR] " << msg << "\n";
+                break;
+            case LogLevel::FATAL:
+                std::cout << "[FATAL] " << msg << "\n";
+                break;
+            default:
+                throw std::logic_error("Invalid log level");
+        }
     }
 
     std::string shiftVector(std::vector<std::string> &arr)

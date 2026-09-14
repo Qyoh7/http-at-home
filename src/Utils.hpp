@@ -4,6 +4,14 @@
 #include <string>
 #include <vector>
 
+enum class LogLevel
+{
+    INFO,
+    WARN,
+    ERROR,
+    FATAL,
+};
+
 namespace Utils
 {
     std::string escapeStr(std::string str);
@@ -16,6 +24,7 @@ namespace Utils
     RequestMethod stringToRequestMethod(std::string str);
     HeaderType stringToHeaderType(std::string str);
     void printRequest(Request request);
+    void log(std::string msg, LogLevel level);
 
     std::string shiftVector(std::vector<std::string> &arr);
     char shiftString(std::string &str);
