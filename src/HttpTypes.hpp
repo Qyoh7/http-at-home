@@ -1,13 +1,22 @@
 #pragma once
+#include <optional>
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <variant>
 #include <vector>
+enum {
+    VARIENT_STRING,
+    VARIENT_INT,
+};
+
 enum class HeaderType
 {
     HOST,
     USER_AGENT,
     ACCEPT,
+    CONTENT_LENGTH,
+    CONTENT_TYPE,
 };
 
 enum class RequestMethod
@@ -25,19 +34,29 @@ enum class RequestMethod
 
 typedef struct 
 {
-    RequestMethod method;
-    std::string target;
-    std::string version;
 } RequestLine;
 
 typedef struct
 {
     HeaderType type;
-    std::string value;
+    std::variant<std::string, int> value;
 } Header;
 
 typedef struct 
 {
-    RequestLine requestLine;
+    RequestMethod method;
+    std::string target;
+    std::string version;
     std::vector<Header> headers;
+    std::optional<std::string> body;
 } Request;
+
+typedef struct
+{
+
+} responseLine;
+
+typedef struct 
+{
+
+} Response;
