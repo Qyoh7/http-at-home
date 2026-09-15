@@ -1,10 +1,9 @@
 #pragma once
 #include <optional>
 #include <string>
-#include <map>
-#include <unordered_map>
 #include <variant>
 #include <vector>
+
 enum {
     VARIENT_STRING,
     VARIENT_INT,
@@ -32,14 +31,10 @@ enum class RequestMethod
     PATCH
 };
 
-typedef struct 
-{
-} RequestLine;
-
 typedef struct
 {
     HeaderType type;
-    std::variant<std::string, int> value;
+    std::string value;
 } Header;
 
 typedef struct 
@@ -51,12 +46,9 @@ typedef struct
     std::optional<std::string> body;
 } Request;
 
-typedef struct
-{
-
-} responseLine;
-
 typedef struct 
 {
-
+    std::string statusLine;
+    std::optional<std::vector<Header>> headers;
+    std::optional<std::string> body;
 } Response;

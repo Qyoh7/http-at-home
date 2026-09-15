@@ -2,7 +2,6 @@
 #include "HttpTypes.hpp"
 #include "Utils.hpp"
 #include <string>
-#include <iostream>
 #include <sys/socket.h>
 #include <stdexcept>
 
@@ -21,51 +20,51 @@ namespace HttpRequestParser
         return buf;
     }
 
-    std::vector<std::string> tokenize(std::string str)
+    std::vector<std::string> tokenizeRequest(std::string raw_request)
     {
         std::vector<std::string> words;
         std::string word;
         for (;;)
         {
-            switch (char c = str.front())
+            switch (char c = raw_request.front())
             {
             case ' ':
                 words.emplace_back(word);
                 word = "";
-                Utils::shiftString(str);
+                Utils::shiftString(raw_request);
                 break;
             case '\r':
                 if (words.back().compare("\r\n") == 0)
                 {
                     words.emplace_back("\r\n");
-                    Utils::shiftString(str);
-                    Utils::shiftString(str);
+                    Utils::shiftString(raw_request);
+                    Utils::shiftString(raw_request);
                     goto end;
                 }
                 words.emplace_back(word);
                 word = "";
-                word += Utils::shiftString(str);
+                word += Utils::shiftString(raw_request);
                 break;
             case '\n':
-                word += Utils::shiftString(str);
+                word += Utils::shiftString(raw_request);
                 words.emplace_back(word);
                 word = "";
                 break;
             default:
-                word += Utils::shiftString(str);
+                word += Utils::shiftString(raw_request);
             }
         }
     end:
-        if (str.length() != 0)
+        if (raw_request.length() > 0)
         {
-            words.emplace_back(str);
+            words.emplace_back(raw_request);
         }
         return words;
     }
 
     Request parseRequest(std::string rawRequest)
     {
-        std::vector<std::string> requestWords = tokenize(rawRequest);
+        std::vector<std::string> requestWords = tokenizeRequest(rawRequest);
         Request ret{};
         ret.method = Utils::stringToRequestMethod(Utils::shiftVector(requestWords));
         ret.target = Utils::shiftVector(requestWords);
@@ -76,15 +75,7 @@ namespace HttpRequestParser
         {
             Header header{};
             header.type = Utils::stringToHeaderType(Utils::shiftVector(requestWords));
-
-            if (Utils::isStringNum(requestWords.front()))
-            {
-                header.value = std::stoi(Utils::shiftVector(requestWords));
-            }
-            else
-            {
-                header.value = Utils::shiftVector(requestWords);
-            }
+            header.value = Utils::shiftVector(requestWords);
 
             ret.headers.emplace_back(header);
 

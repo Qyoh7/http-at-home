@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <sstream>
 
 namespace Utils
 {
@@ -125,6 +126,25 @@ namespace Utils
         }
     }
 
+    std::string headerTypeToString(const HeaderType& type)
+    {
+        switch (type)
+        {
+            case HeaderType::HOST:
+                return "Host:";
+            case HeaderType::CONTENT_TYPE:
+                return "Content-Type";
+            case HeaderType::CONTENT_LENGTH:
+                return "Content-Length";
+            case HeaderType::ACCEPT:
+                return "Accept:";
+            case HeaderType::USER_AGENT:
+                return "User-Agent";
+            default:
+                throw std::logic_error(std::string("Invalid header type when converting to string: ") + std::string(magic_enum::enum_name(type)));
+        }
+    }
+
     std::string escapeStr(std::string str)
     {
         std::string escaped;
@@ -192,11 +212,7 @@ namespace Utils
         std::printf("Number of headers, %zu\n", request.headers.size());
         for (Header h : request.headers)
         {
-            if (h.value.index() == VARIENT_INT) 
-                std::cout << "type: " << magic_enum::enum_name(h.type) << " value: " << std::get<int>(h.value) << "\n";
-            else if (h.value.index() == VARIENT_STRING) 
-                std::cout << "type: " << magic_enum::enum_name(h.type) << " value: " << std::get<std::string>(h.value) << "\n";
-            else std::cout << "Invalid header value type: header name: " << magic_enum::enum_name(h.type);
+            std::cout << "type: " << magic_enum::enum_name(h.type) << " value: " << h.value << "\n";
         }
         if (request.body.has_value())
         {
