@@ -11,6 +11,24 @@
 
 namespace HttpRequestHandler
 {
+    std::string headerTypeToString(const HeaderType& type)
+    {
+        switch (type)
+        {
+            case HeaderType::HOST:
+                return "Host:";
+            case HeaderType::CONTENT_TYPE:
+                return "Content-Type";
+            case HeaderType::CONTENT_LENGTH:
+                return "Content-Length";
+            case HeaderType::ACCEPT:
+                return "Accept:";
+            case HeaderType::USER_AGENT:
+                return "User-Agent";
+            default:
+                throw std::logic_error(std::string("Invalid header type when converting to string: ") + std::string(magic_enum::enum_name(type)));
+        }
+    }
 
     std::string responseToRawString(const Response& response)
     {
@@ -18,10 +36,10 @@ namespace HttpRequestHandler
         raw_response << response.statusLine << "\r\n";
         if (response.headers.has_value())
         {
-            for (Header h : response.headers.value())
+            for (auto it = response.headers.value().begin(); it != response.headers.value().end(); it++)
             {
-                raw_response << Utils::headerTypeToString(h.type);
-                raw_response << " " << h.value << "\r\n";
+                raw_response << headerTypeToString(it->first);
+                raw_response << " " << it->second<< "\r\n";
             }
         }
         raw_response << "\r\n";
@@ -41,7 +59,7 @@ namespace HttpRequestHandler
             throw std::runtime_error(std::string("Failed to send response: ") + std::strerror(errno));
         }
     }
-    
+
     void handleRequest(const Request& request, int client_fd)
     {
         std::string target = Utils::stringToLower(request.target);
@@ -57,12 +75,22 @@ namespace HttpRequestHandler
                 else if (target.substr(0, 5) == "/echo")
                 {
                     response.statusLine = response200();
-                    response.body = request.target.substr(6, request.target.back());
+                    try {
+                        response.body = request.target.substr(6, request.target.back());
+                    }
+                    catch (std::out_of_range)
+                    {
+                        response.body = "";
+                        break;
+                    }
                     break;
                 }
                 else if (target == "/user-agent")
                 {
                     response.statusLine = response200();
+                    Utils::printRequest(request);
+                    response.body = request.headers.at(HeaderType::USER_AGENT);
+                    break;
                 }
                 else {
                     response.statusLine = response404();

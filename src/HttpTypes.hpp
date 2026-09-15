@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 #include <string>
-#include <variant>
+#include <unordered_map>
 #include <vector>
 
 enum {
@@ -31,24 +31,18 @@ enum class RequestMethod
     PATCH
 };
 
-typedef struct
-{
-    HeaderType type;
-    std::string value;
-} Header;
-
 typedef struct 
 {
     RequestMethod method;
     std::string target;
     std::string version;
-    std::vector<Header> headers;
+    std::unordered_map<HeaderType, std::string> headers;
     std::optional<std::string> body;
 } Request;
 
 typedef struct 
 {
     std::string statusLine;
-    std::optional<std::vector<Header>> headers;
+    std::optional<std::unordered_map<HeaderType, std::string>> headers;
     std::optional<std::string> body;
 } Response;

@@ -21,9 +21,6 @@ namespace Utils
     bool isStringNum(std::string str);
     std::string stringToLower(std::string str);
 
-    RequestMethod stringToRequestMethod(std::string str);
-    HeaderType stringToHeaderType(std::string str);
-    std::string headerTypeToString(const HeaderType& type);
     void printRequest(Request request);
     void log(std::string msg, LogLevel level);
 

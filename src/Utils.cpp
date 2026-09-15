@@ -54,96 +54,6 @@ namespace Utils
         return ret;
     }
 
-    RequestMethod stringToRequestMethod(std::string str)
-    {
-        if (str == "GET")
-        {
-            return RequestMethod::GET;
-        }
-        else if (str == "HEAD")
-        {
-            return RequestMethod::HEAD;
-        }
-        else if (str == "POST")
-        {
-            return RequestMethod::POST;
-        }
-        else if (str == "PUT")
-        {
-            return RequestMethod::PUT;
-        }
-        else if (str == "DELETE")
-        {
-            return RequestMethod::DELETE;
-        }
-        else if (str == "CONNECT")
-        {
-            return RequestMethod::CONNECT;
-        }
-        else if (str == "OPTIONS")
-        {
-            return RequestMethod::CONNECT;
-        }
-        else if (str == "TRACE")
-        {
-            return RequestMethod::TRACE;
-        }
-        else if (str == "PATCH")
-        {
-            return RequestMethod::PATCH;
-        }
-        else 
-        {
-            throw std::runtime_error("Unexpected request method " + str);
-        }
-    }
-
-    HeaderType stringToHeaderType(std::string str)
-    {
-        if (str == "Host:")
-        {
-            return HeaderType::HOST;
-        }
-        else if (str == "User-Agent:")
-        {
-            return HeaderType::USER_AGENT;
-        }
-        else if (str == "Accept:")
-        {
-            return HeaderType::ACCEPT;
-        }
-        else if (str == "Content-Length:")
-        {
-            return HeaderType::CONTENT_LENGTH;
-        }
-        else if (str == "Content-Type:")
-        {
-            return HeaderType::CONTENT_TYPE;
-        }
-        else 
-        {
-            throw std::runtime_error("Unexpected Header Type " + str);
-        }
-    }
-
-    std::string headerTypeToString(const HeaderType& type)
-    {
-        switch (type)
-        {
-            case HeaderType::HOST:
-                return "Host:";
-            case HeaderType::CONTENT_TYPE:
-                return "Content-Type";
-            case HeaderType::CONTENT_LENGTH:
-                return "Content-Length";
-            case HeaderType::ACCEPT:
-                return "Accept:";
-            case HeaderType::USER_AGENT:
-                return "User-Agent";
-            default:
-                throw std::logic_error(std::string("Invalid header type when converting to string: ") + std::string(magic_enum::enum_name(type)));
-        }
-    }
 
     std::string escapeStr(std::string str)
     {
@@ -173,7 +83,6 @@ namespace Utils
             case LogLevel::INFO:
                 std::cout << "[INFO] " << msg << "\n";
                 break;
-
             case LogLevel::WARN:
                 std::cout << "[WARN] " << msg << "\n";
                 break;
@@ -210,9 +119,9 @@ namespace Utils
         std::cout << "version: " << request.version << "\n";
         std::cout << "===HEADERS===\n";
         std::printf("Number of headers, %zu\n", request.headers.size());
-        for (Header h : request.headers)
+        for (auto it = request.headers.begin(); it != request.headers.end(); it++)
         {
-            std::cout << "type: " << magic_enum::enum_name(h.type) << " value: " << h.value << "\n";
+            std::cout << "type: " << magic_enum::enum_name(it->first) << " value: " << it->second << "\n";
         }
         if (request.body.has_value())
         {
