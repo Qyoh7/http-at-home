@@ -92,7 +92,7 @@ void HttpServer::init(int port, std::string root_dir)
     bindSocket();
     listenSocket();
     Utils::log("Listening on port " + std::to_string(port), LogLevel::INFO);
-    Utils::log("Operating on port " + std::to_string(port), LogLevel::INFO);
+    Utils::log("Operating in directory " + root_dir, LogLevel::INFO);
 }
 
 

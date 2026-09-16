@@ -43,6 +43,6 @@ typedef struct
 typedef struct 
 {
     std::string statusLine;
-    std::optional<std::unordered_map<HeaderType, std::string>> headers;
+    std::unordered_map<HeaderType, std::string> headers;
     std::optional<std::string> body;
 } Response;
