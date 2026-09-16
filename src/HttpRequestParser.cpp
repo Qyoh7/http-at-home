@@ -31,7 +31,7 @@ namespace HttpRequestParser
         }
         else 
         {
-            throw std::runtime_error("Unexpected Header Type " + str);
+            throw std::runtime_error("Unexpected Header Type \"" + str + "\"");
         }
     }
 
@@ -143,9 +143,14 @@ end:
         ret.version = Utils::shiftVector(requestWords);
         Utils::shiftVector(requestWords);
 
-        ret.headers.emplace();
         for (;;)
         {
+            if (requestWords.front() == "\r\n")
+            {
+                Utils::shiftVector(requestWords);
+                break;
+            }
+
             HeaderType type = stringToHeaderType(Utils::shiftVector(requestWords));
             std::string value = Utils::shiftVector(requestWords);
 
@@ -154,11 +159,6 @@ end:
             if (Utils::shiftVector(requestWords) != "\r\n")
             {
                 throw std::runtime_error("Malformed Header: missing CRLF");
-            }
-            if (requestWords.front() == "\r\n")
-            {
-                Utils::shiftVector(requestWords);
-                break;
             }
         }
 

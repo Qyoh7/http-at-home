@@ -22,7 +22,7 @@ namespace Utils
     std::string stringToLower(std::string str);
 
     void printRequest(Request request);
-    void log(std::string msg, LogLevel level);
+    void log(std::string msg, LogLevel level = LogLevel::INFO);
 
     std::string shiftVector(std::vector<std::string> &arr);
     char shiftString(std::string &str);

@@ -1,11 +1,13 @@
 #pragma once
-#include <arpa/inet.h>
+#include <string>
+#include <filesystem>
 
 class HttpServer
 {
     private:
         const int connection_backlog = 5;
-        const int port;
+        int port;
+        std::filesystem::path root_dir;
         int server_fd;
 
         int createSocket();
@@ -15,8 +17,8 @@ class HttpServer
         int acceptClient();
         void handleClient(int client_fd);
     public:
-        explicit HttpServer(int port);
+        explicit HttpServer();
         ~HttpServer();
-        void init();
+        void init(int port, std::string root_dir);
         void run();
 };

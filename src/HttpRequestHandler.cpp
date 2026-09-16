@@ -2,6 +2,7 @@
 #include "HttpResponses.hpp"
 #include "HttpTypes.hpp"
 #include "Utils.hpp"
+#include <filesystem>
 #include <cstring>
 #include <magic_enum/magic_enum.hpp>
 #include <stdexcept>

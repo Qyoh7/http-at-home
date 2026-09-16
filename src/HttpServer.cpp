@@ -2,6 +2,7 @@
 #include "HttpRequestParser.hpp"
 #include "HttpRequestHandler.hpp"
 #include "Utils.hpp"
+#include <thread>
 #include <cstring>
 #include <stdexcept>
 #include <errno.h>
@@ -11,7 +12,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-HttpServer::HttpServer(int port) : port(port)
+HttpServer::HttpServer()
 {
 
 }
@@ -76,11 +77,13 @@ void HttpServer::handleClient(int client_fd)
 {
     std::string rawRequest = HttpRequestParser::recvRequest(client_fd);
     Request request = HttpRequestParser::parseRequest(rawRequest);
-    HttpRequestHandler::handleRequest(request, client_fd);
+    HttpRequestHandler::handleRequest(request, root_dir, client_fd);
 }
 
-void HttpServer::init()
+void HttpServer::init(int port, std::string root_dir)
 {
+    this->port = port;
+    this->root_dir = root_dir;
     server_fd = createSocket();
 
     // Since the tester restarts your program quite often, setting SO_REUSEADDR
@@ -89,6 +92,7 @@ void HttpServer::init()
     bindSocket();
     listenSocket();
     Utils::log("Listening on port " + std::to_string(port), LogLevel::INFO);
+    Utils::log("Operating on port " + std::to_string(port), LogLevel::INFO);
 }
 
 
@@ -97,7 +101,12 @@ void HttpServer::run()
     for (;;)
     {
         int client_fd = acceptClient();
-        handleClient(client_fd);
-        close(client_fd);
+        Utils::log("starting thread", LogLevel::INFO);
+        std::thread([this, client_fd]() {
+                handleClient(client_fd);
+                close(client_fd);
+                }).detach();
+
+        Utils::log("created thread", LogLevel::INFO);
     }
 }
