@@ -1,14 +1,18 @@
 #pragma once
+#include "HttpRouter.hpp"
 #include <string>
-#include <filesystem>
 
 class HttpServer
 {
     private:
+        HttpRouter& router;
         const int connection_backlog = 5;
         int port;
-        std::filesystem::path root_dir;
         int server_fd;
+
+        std::string headerTypeToString(const HeaderType &type);
+        std::string responseToRawString(const Response &response);
+        void sendResponse(Response response, int client_fd);
 
         int createSocket();
         void bindSocket();
@@ -17,8 +21,8 @@ class HttpServer
         int acceptClient();
         void handleClient(int client_fd);
     public:
-        explicit HttpServer();
+        explicit HttpServer(HttpRouter& router);
         ~HttpServer();
-        void init(int port, std::string root_dir);
+        void init(int port);
         void run();
 };

@@ -115,7 +115,7 @@ namespace Utils
     {
         std::cout << "===REQUEST LINE===\n";
         std::cout << "request method: " << magic_enum::enum_name(request.method) << "\n";
-        std::cout << "request target: " << request.target << "\n";
+        std::cout << "request target: \"" << request.target << "\"\n";
         std::cout << "version: " << request.version << "\n";
         std::cout << "===HEADERS===\n";
         std::printf("Number of headers, %zu\n", request.headers.size());
