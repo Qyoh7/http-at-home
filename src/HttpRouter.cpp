@@ -4,6 +4,7 @@
 #include "Utils.hpp"
 #include "magic_enum/magic_enum.hpp"
 #include <functional>
+
 /*
 this class adds routes to an internal database, 
 then when a request is recieved from the client, 

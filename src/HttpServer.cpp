@@ -1,5 +1,6 @@
 #include "HttpServer.hpp"
 #include "HttpRequestParser.hpp"
+#include "HttpTypes.hpp"
 #include "Utils.hpp"
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
@@ -88,8 +89,10 @@ std::string HttpServer::headerTypeToString(const HeaderType &type)
             return "Accept:";
         case HeaderType::USER_AGENT:
             return "User-Agent:";
+        case HeaderType::CONNECTION:
+            return "Connection:";
         default:
-            throw std::logic_error(std::string("Invalid header type when converting to string: ") + std::string(magic_enum::enum_name(type)));
+            return "Unknown:";
     }
 }
 

@@ -29,9 +29,13 @@ namespace HttpRequestParser
         {
             return HeaderType::CONTENT_TYPE;
         }
+        else if (str == "Connection:")
+        {
+            return HeaderType::CONNECTION;
+        }
         else 
         {
-            throw std::runtime_error("Unexpected Header Type \"" + str + "\"");
+            return HeaderType::UNKNOWN;
         }
     }
 

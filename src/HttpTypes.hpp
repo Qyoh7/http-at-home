@@ -6,11 +6,13 @@
 
 enum class HeaderType
 {
+    UNKNOWN,
     HOST,
     USER_AGENT,
     ACCEPT,
     CONTENT_LENGTH,
     CONTENT_TYPE,
+    CONNECTION,
 };
 
 enum class RequestMethod
